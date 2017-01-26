@@ -33,7 +33,7 @@ fn main() {
 
     let program = glium::Program::from_source(&display, &vertex_shader, include_str!("../assets/shaders/shader_150.glslf"), None).unwrap();
 
-    let mut rend = Renderable::new(&display, &planet.verticies, Some(&planet.normals), vertex_shader.as_str(), include_str!("../assets/shaders/shader_150.glslf"));
+    let mut rend = Renderable::new(&display, &planet.verticies, &planet.normals, vertex_shader.as_str(), include_str!("../assets/shaders/shader_150.glslf"));
 
     let mut vertical_position : f32 = 0.;
     let mut horisontal_angle : f32 = 0.;
@@ -44,7 +44,7 @@ fn main() {
         let mut target = display.draw();
         let ren = &mut rend;
         
-        target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
+        target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
         let params = glium::DrawParameters {
             depth: glium::Depth {
@@ -55,11 +55,11 @@ fn main() {
         .. Default::default()
         };
 
-        target.draw((&verts, &normals), &indices, &program, 
+        /*target.draw((&verts, &normals), &indices, &program, 
                     &uniform!{view: cam.view, projection: cam.projection, u_light: light},
                     //&glium::uniforms::EmptyUniforms,
-                    &params).unwrap();
-        //ren.draw(&mut target, params, cam.view, cam.projection, light);
+                    &params).unwrap();*/
+        ren.draw(&mut target, params, cam.view, cam.projection, light);
         target.finish().unwrap();
 
 
