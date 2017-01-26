@@ -6,6 +6,7 @@ mod vertex;
 mod camera;
 mod planet;
 mod triangle;
+mod renderable;
 
 fn main() {
     use glium::{DisplayBuild, Surface};
@@ -13,6 +14,7 @@ fn main() {
     use camera::Camera;
     use cgmath::Vector3;
     use planet::Planet;
+    use renderable::Renderable;
 
     let display = glium::glutin::WindowBuilder::new().with_depth_buffer(24).build_glium().unwrap();
     let mut target = display.draw();
@@ -31,13 +33,16 @@ fn main() {
 
     let program = glium::Program::from_source(&display, &vertex_shader, include_str!("../assets/shaders/shader_150.glslf"), None).unwrap();
 
+    let mut rend = Renderable::new(&display, &planet.verticies, Some(&planet.normals), vertex_shader.as_str(), include_str!("../assets/shaders/shader_150.glslf"));
+
     let mut vertical_position : f32 = 0.;
     let mut horisontal_angle : f32 = 0.;
 
     let light = [-1.0, 0.4, 0.9f32];
 
     loop {
-        let mut target = display.draw();     
+        let mut target = display.draw();
+        let ren = &mut rend;
         
         target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
 
@@ -54,6 +59,7 @@ fn main() {
                     &uniform!{view: cam.view, projection: cam.projection, u_light: light},
                     //&glium::uniforms::EmptyUniforms,
                     &params).unwrap();
+        //ren.draw(&mut target, params, cam.view, cam.projection, light);
         target.finish().unwrap();
 
 

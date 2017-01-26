@@ -1,5 +1,3 @@
-extern crate cgmath;
-
 use vertex::*;
 use cgmath::*;
 use triangle::*;

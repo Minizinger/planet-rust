@@ -1,4 +1,3 @@
-extern crate cgmath;
 use vertex::*;
 use cgmath::{Vector3, InnerSpace};
 use std::cell::RefCell;
