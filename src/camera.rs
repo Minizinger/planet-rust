@@ -19,8 +19,6 @@ impl Camera {
          Camera{
              view: array4x4(view_martix),
              projection: array4x4(perspective(Rad(PI / 4.), aspect, 0.1, 500.)),
-             //projection: Matrix4::identity(),
-             //projection:  cgmath::ortho(-1., 1., -1., 1., 0.1, 500.),
 
              position: norm_pos,
              fov: Rad(PI / 4.),

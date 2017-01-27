@@ -25,7 +25,6 @@ impl<T : AnyVertex + Clone, N : AnyVertex + Clone> Triangle<T, N> {
      }
 
      pub fn subdivide(&mut self){
-         //let temp : Result<Box<&TriangleContent<T>>, _> = self.contents.downcast();
          let tris : [Rc<RefCell<Triangle<T, N>>>; 4] = [Rc::new(RefCell::new(Triangle::new([Vector3::new(0.,0.,0.); 3], 0.))), 
                                                     Rc::new(RefCell::new(Triangle::new([Vector3::new(0.,0.,0.); 3], 0.))), 
                                                     Rc::new(RefCell::new(Triangle::new([Vector3::new(0.,0.,0.); 3], 0.))), 
