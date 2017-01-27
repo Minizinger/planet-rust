@@ -6,15 +6,16 @@ use triangle::*;
 use std::f32;
 use renderable::{RenderableVertexNormal, Renderable};
 
-pub struct Planet<T : AnyVertex, N : AnyVertex> {
+pub struct Ocean<T : AnyVertex, N : AnyVertex> {
     triangles : Vec<Triangle<T, N>>,
     pub verticies : Vec<T>,
     pub normals : Vec<N>,
     pub renderable : RenderableVertexNormal<T, N>,
+    scale : [[f32;4];4],
 }
 
-impl<T : AnyVertex, N : AnyVertex> Planet<T, N> {
-     pub fn new(display : &Facade, subdivisions : i32) -> Self{
+impl<T : AnyVertex, N : AnyVertex> Ocean<T, N> {
+     pub fn new(display : &Facade, subdivisions : i32, size : f32) -> Self{
          let t : f32 = (1. + (5.0f32).sqrt()) / 2.;
 
          let mut p0 : Vector3<f32> = Vector3::new(-1., t, 0.);
@@ -86,20 +87,25 @@ impl<T : AnyVertex, N : AnyVertex> Planet<T, N> {
          for t in tris.iter_mut(){
              nrm.append(&mut t.get_normal());
          }
-        let vertex_shader = format!("{}{}", include_str!("../assets/shaders/noise4d.glsl"), include_str!("../assets/shaders/shader_150.glslv"));
-        let fragment_shader = include_str!("../assets/shaders/shader_150.glslf");
+        let vertex_shader = include_str!("../assets/shaders/ocean.glslv");
+        let fragment_shader = include_str!("../assets/shaders/ocean.glslf");
         let rnd = RenderableVertexNormal::new(display, &verts, &nrm, &vertex_shader, &fragment_shader);
 
-         Planet{
+        let scal = [[size, 0.0, 0.0, 0.0],
+                    [0.0, size, 0.0, 0.0],
+                    [0.0, 0.0, size, 0.0],
+                    [0.0, 0.0, 0.0, 1.0]];
+         Ocean{
              triangles : tris,
              verticies : verts,
              normals : nrm,
              renderable : rnd,
+             scale : scal,
          }
      }
 
-     pub fn draw(&mut self, target: &mut Frame, params: &DrawParameters, m_view: [[f32; 4]; 4], m_proj: [[f32; 4]; 4], light: [f32; 3]){
-         let uni = uniform!{view : m_view, projection: m_proj, u_light: light};
+     pub fn draw(&mut self, target: &mut Frame, params: &DrawParameters, m_view: [[f32; 4]; 4], m_proj: [[f32; 4]; 4], light: [f32; 3], time : f32){
+         let uni = uniform!{view : m_view, projection: m_proj, u_light: light, f_time : time, scale: self.scale};
          self.renderable.render(target, params, &uni);
      }
 }

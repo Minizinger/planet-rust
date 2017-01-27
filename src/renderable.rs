@@ -1,9 +1,10 @@
 use super::glium::{Surface, Vertex, VertexBuffer, Program, Frame, DrawParameters};
 use super::glium::index::NoIndices;
 use super::glium::backend::Facade;
+use super::glium::uniforms::{Uniforms, AsUniformValue, UniformsStorage};
 
-pub trait Renderable{
-    fn render(&mut self, target : &mut Frame, params : DrawParameters, m_view : [[f32;4];4], m_proj : [[f32;4];4], light : [f32;3]);
+pub trait Renderable<'a, T : AsUniformValue, R : Uniforms>{
+    fn render(&mut self, target : &mut Frame, params : &DrawParameters, uniforms : &UniformsStorage<'a, T, R>);
 }
 
 pub struct RenderableVertexNormal<V : Copy + Vertex, N : Copy + Vertex> {
@@ -53,17 +54,17 @@ impl<V : Copy + Vertex> RenderableVertex<V> {
     }
 }
 
-impl<V : Vertex, N : Vertex> Renderable for RenderableVertexNormal<V, N> {
-    fn render(&mut self, target : &mut Frame, params : DrawParameters, m_view : [[f32;4];4], m_proj : [[f32;4];4], light : [f32;3]){
+impl<'a, T : AsUniformValue, R : Uniforms, V : Vertex, N : Vertex> Renderable<'a, T, R> for RenderableVertexNormal<V, N> {
+    fn render(&mut self, target : &mut Frame, params : &DrawParameters, uniforms : &UniformsStorage<'a, T, R>){
         target.draw((&self.vertex_buffer, &self.normal_buffer), &self.index_buffer, &self.shader, 
-                    &uniform!{view: m_view, projection: m_proj, u_light: light},
-                    &params).unwrap();
+                    uniforms,
+                    params).unwrap();
     }
 }
-impl<V : Vertex> Renderable for RenderableVertex<V> {
-    fn render(&mut self, target : &mut Frame, params : DrawParameters, m_view : [[f32;4];4], m_proj : [[f32;4];4], light : [f32;3]){
+impl<'a, T : AsUniformValue, R : Uniforms, V : Vertex> Renderable<'a, T, R> for RenderableVertex<V> {
+    fn render(&mut self, target : &mut Frame, params : &DrawParameters, uniforms : &UniformsStorage<'a, T, R>){
         target.draw(&self.vertex_buffer, &self.index_buffer, &self.shader, 
-                    &uniform!{view: m_view, projection: m_proj, u_light: light},
-                    &params).unwrap();
+                    uniforms,
+                    params).unwrap();
     }
 }

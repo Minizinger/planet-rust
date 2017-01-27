@@ -7,6 +7,7 @@ mod camera;
 mod planet;
 mod triangle;
 mod renderable;
+mod ocean;
 
 fn main() {
     use glium::{DisplayBuild, Surface};
@@ -14,6 +15,7 @@ fn main() {
     use camera::Camera;
     use cgmath::Vector3;
     use planet::Planet;
+    use ocean::Ocean;
 
     let display = glium::glutin::WindowBuilder::new().with_depth_buffer(24).build_glium().unwrap();
     let target = display.draw();
@@ -22,11 +24,14 @@ fn main() {
 
     let mut cam : Camera = Camera::new(Vector3::new(0.0, -5.0, 0.0), width as f32 / height as f32, 5.);
     let mut planet : Planet<VertexPosition, Normal> = Planet::new(&display, 3);
+    let mut ocean : Ocean<VertexPosition, Normal> = Ocean::new(&display, 3, 1.2);
 
     let mut vertical_position : f32 = 0.;
     let mut horisontal_angle : f32 = 0.;
 
     let light = [-1.0, 0.4, 0.9f32];
+    
+    let mut time = 0.0;
 
     loop {
         let mut target = display.draw();
@@ -42,7 +47,10 @@ fn main() {
         .. Default::default()
         };
 
-        planet.draw(&mut target, params, cam.view, cam.projection, light);
+        time += 0.05;
+        ocean.draw(&mut target, &params, cam.view, cam.projection, light, time);
+        planet.draw(&mut target, &params, cam.view, cam.projection, light);
+
         target.finish().unwrap();
 
 
