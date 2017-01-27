@@ -3,7 +3,6 @@ use super::glium::backend::Facade;
 use super::glium::{Frame, DrawParameters};
 use cgmath::*;
 use triangle::*;
-use std::f32;
 use renderable::{RenderableVertexNormal, Renderable};
 use rand::distributions::Range;
 use rand::distributions::IndependentSample;
@@ -18,7 +17,10 @@ pub struct Ocean<T: AnyVertex, N: AnyVertex> {
     u_color: [f32; 3],
 }
 
-impl<T: AnyVertex, N: AnyVertex> Ocean<T, N> {
+impl<T, N: AnyVertex> Ocean<T, N>
+    where T: AnyVertex,
+          N: AnyVertex
+{
     pub fn new(display: &Facade, subdivisions: i32, size: f32) -> Self {
         let t: f32 = (1. + (5.0f32).sqrt()) / 2.;
 
@@ -50,31 +52,29 @@ impl<T: AnyVertex, N: AnyVertex> Ocean<T, N> {
         p10 = p10.normalize();
         p11 = p11.normalize();
 
-        let mut tris: Vec<Triangle<T, N>> = Vec::new();
+        let mut tris = vec![Triangle::new([p0, p11, p5], 0.),
+                            Triangle::new([p0, p5, p1], 0.),
+                            Triangle::new([p0, p1, p7], 0.),
+                            Triangle::new([p0, p7, p10], 0.),
+                            Triangle::new([p0, p10, p11], 0.),
 
-        tris.push(Triangle::new([p0, p11, p5], 0.));
-        tris.push(Triangle::new([p0, p5, p1], 0.));
-        tris.push(Triangle::new([p0, p1, p7], 0.));
-        tris.push(Triangle::new([p0, p7, p10], 0.));
-        tris.push(Triangle::new([p0, p10, p11], 0.));
+                            Triangle::new([p1, p5, p9], 0.),
+                            Triangle::new([p5, p11, p4], 0.),
+                            Triangle::new([p11, p10, p2], 0.),
+                            Triangle::new([p10, p7, p6], 0.),
+                            Triangle::new([p7, p1, p8], 0.),
 
-        tris.push(Triangle::new([p1, p5, p9], 0.));
-        tris.push(Triangle::new([p5, p11, p4], 0.));
-        tris.push(Triangle::new([p11, p10, p2], 0.));
-        tris.push(Triangle::new([p10, p7, p6], 0.));
-        tris.push(Triangle::new([p7, p1, p8], 0.));
+                            Triangle::new([p3, p9, p4], 0.),
+                            Triangle::new([p3, p4, p2], 0.),
+                            Triangle::new([p3, p2, p6], 0.),
+                            Triangle::new([p3, p6, p8], 0.),
+                            Triangle::new([p3, p8, p9], 0.),
 
-        tris.push(Triangle::new([p3, p9, p4], 0.));
-        tris.push(Triangle::new([p3, p4, p2], 0.));
-        tris.push(Triangle::new([p3, p2, p6], 0.));
-        tris.push(Triangle::new([p3, p6, p8], 0.));
-        tris.push(Triangle::new([p3, p8, p9], 0.));
-
-        tris.push(Triangle::new([p4, p9, p5], 0.));
-        tris.push(Triangle::new([p2, p4, p11], 0.));
-        tris.push(Triangle::new([p6, p2, p10], 0.));
-        tris.push(Triangle::new([p8, p6, p7], 0.));
-        tris.push(Triangle::new([p9, p8, p1], 0.));
+                            Triangle::new([p4, p9, p5], 0.),
+                            Triangle::new([p2, p4, p11], 0.),
+                            Triangle::new([p6, p2, p10], 0.),
+                            Triangle::new([p8, p6, p7], 0.),
+                            Triangle::new([p9, p8, p1], 0.)];
 
         for _ in 0..subdivisions {
             for tri in tris.iter_mut() {
