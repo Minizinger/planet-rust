@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate glium;
 extern crate cgmath;
+extern crate rand;
 
 mod vertex;
 mod camera;
@@ -23,8 +24,8 @@ fn main() {
     target.finish().unwrap();
 
     let mut cam : Camera = Camera::new(Vector3::new(0.0, -5.0, 0.0), width as f32 / height as f32, 5.);
-    let mut planet : Planet<VertexPosition, Normal> = Planet::new(&display, 3);
-    let mut ocean : Ocean<VertexPosition, Normal> = Ocean::new(&display, 3, 1.2);
+    let mut planet : Planet<VertexPosition, Normal> = Planet::new(&display, 4);
+    let mut ocean : Ocean<VertexPosition, Normal> = Ocean::new(&display, 3, 1.09);
 
     let mut vertical_position : f32 = 0.;
     let mut horisontal_angle : f32 = 0.;
@@ -65,6 +66,11 @@ fn main() {
 
                 glium::glutin::Event::KeyboardInput(_, _, Some(glium::glutin::VirtualKeyCode::Right)) => horisontal_angle += 0.1,
                 glium::glutin::Event::KeyboardInput(_, _, Some(glium::glutin::VirtualKeyCode::Left)) => horisontal_angle -= 0.1,
+
+                glium::glutin::Event::KeyboardInput(_, _, Some(glium::glutin::VirtualKeyCode::Space)) => {
+                    planet = Planet::new(&display, 4);
+                    ocean = Ocean::new(&display, 3, 1.09);
+                },
 
                 _ => ()
             }

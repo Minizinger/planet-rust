@@ -17,7 +17,7 @@ void main() {
     v_light = transpose(inverse(mat3(view))) * u_light;
     vec4 pos = vec4(position, 1.0);
     pos = pos * scale;
-    pos = pos + (normalize(pos) * sin(pos * 50 + f_time)) * 0.0025;
+    //pos = pos + (normalize(pos) * sin(pos * 50 + f_time)) * 0.0025;
     pos = projection * view * pos;
     gl_Position = pos;
 }

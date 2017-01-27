@@ -5,12 +5,21 @@ use cgmath::*;
 use triangle::*;
 use std::f32;
 use renderable::{RenderableVertexNormal, Renderable};
+use rand::distributions::Range;
+use rand::distributions::IndependentSample;
+use rand::random;
+use rand;
 
 pub struct Planet<T : AnyVertex, N : AnyVertex> {
     triangles : Vec<Triangle<T, N>>,
     pub verticies : Vec<T>,
     pub normals : Vec<N>,
     pub renderable : RenderableVertexNormal<T, N>,
+    f_seed : f32,
+    f_persistance : f32,
+    f_lacunarity : f32,
+    i_octaves : i32,
+    u_color : [f32;3],
 }
 
 impl<T : AnyVertex, N : AnyVertex> Planet<T, N> {
@@ -90,16 +99,26 @@ impl<T : AnyVertex, N : AnyVertex> Planet<T, N> {
         let fragment_shader = include_str!("../assets/shaders/shader_150.glslf");
         let rnd = RenderableVertexNormal::new(display, &verts, &nrm, &vertex_shader, &fragment_shader);
 
+        let mut rng = rand::thread_rng();
+        let random_pers = Range::new(0.0f32, 1.0f32);
+        let random_lac = Range::new(1.0f32, 3.0f32);
+        let random_step = Range::new(1i32, 10i32);
+
          Planet{
              triangles : tris,
              verticies : verts,
              normals : nrm,
              renderable : rnd,
+             f_seed : random::<f32>(),
+             f_persistance : random_pers.ind_sample(&mut rng),
+             f_lacunarity : random_lac.ind_sample(&mut rng),
+             i_octaves : random_step.ind_sample(&mut rng),
+             u_color: [random_pers.ind_sample(&mut rng), random_pers.ind_sample(&mut rng), random_pers.ind_sample(&mut rng)],
          }
      }
 
      pub fn draw(&mut self, target: &mut Frame, params: &DrawParameters, m_view: [[f32; 4]; 4], m_proj: [[f32; 4]; 4], light: [f32; 3]){
-         let uni = uniform!{view : m_view, projection: m_proj, u_light: light};
+         let uni = uniform!{view : m_view, projection: m_proj, u_light: light, f_seed: self.f_seed, f_persistance: self.f_persistance, f_lacunarity: self.f_lacunarity, i_octaves: self.i_octaves, u_color: self.u_color};
          self.renderable.render(target, params, &uni);
      }
 }

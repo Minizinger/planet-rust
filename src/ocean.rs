@@ -5,6 +5,9 @@ use cgmath::*;
 use triangle::*;
 use std::f32;
 use renderable::{RenderableVertexNormal, Renderable};
+use rand::distributions::Range;
+use rand::distributions::IndependentSample;
+use rand;
 
 pub struct Ocean<T : AnyVertex, N : AnyVertex> {
     triangles : Vec<Triangle<T, N>>,
@@ -12,6 +15,7 @@ pub struct Ocean<T : AnyVertex, N : AnyVertex> {
     pub normals : Vec<N>,
     pub renderable : RenderableVertexNormal<T, N>,
     scale : [[f32;4];4],
+    u_color : [f32;3],
 }
 
 impl<T : AnyVertex, N : AnyVertex> Ocean<T, N> {
@@ -95,17 +99,22 @@ impl<T : AnyVertex, N : AnyVertex> Ocean<T, N> {
                     [0.0, size, 0.0, 0.0],
                     [0.0, 0.0, size, 0.0],
                     [0.0, 0.0, 0.0, 1.0]];
+
+        let mut rng = rand::thread_rng();
+        let col = Range::new(0.0f32, 1.0f32);
+
          Ocean{
              triangles : tris,
              verticies : verts,
              normals : nrm,
              renderable : rnd,
              scale : scal,
+             u_color : [col.ind_sample(&mut rng), col.ind_sample(&mut rng), col.ind_sample(&mut rng)],
          }
      }
 
      pub fn draw(&mut self, target: &mut Frame, params: &DrawParameters, m_view: [[f32; 4]; 4], m_proj: [[f32; 4]; 4], light: [f32; 3], time : f32){
-         let uni = uniform!{view : m_view, projection: m_proj, u_light: light, f_time : time, scale: self.scale};
+         let uni = uniform!{view : m_view, projection: m_proj, u_light: light, f_time : time, scale: self.scale, u_color : self.u_color};
          self.renderable.render(target, params, &uni);
      }
 }

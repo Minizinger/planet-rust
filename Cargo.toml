@@ -6,3 +6,4 @@ authors = ["Mikhail Kharitonovich <kharitonovich.m@gmail.com>"]
 [dependencies]
 cgmath="*"
 glium="*"
+rand="*"
