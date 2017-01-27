@@ -21,36 +21,6 @@ float Noise(vec4 p)
     return (0.5 * snoise(p) + 0.5);
 }
 
-/*float Terrain(vec4 p, int steps, float _scale) //Scale = 36
-{
-    vec4 displace = vec4(0);
-    for(int i = 0; i < steps; i++)
-    {
-        displace = vec4(
-            Noise(p * _scale + displace),
-            Noise(p.yzxw * _scale + displace),
-            Noise(p.zxyw * _scale + displace),
-            1.0);
-            _scale *= 0.5f;
-    }
-    float e = Noise(p * _scale + displace);
-
-    e = pow(e, 2);
-    //float continent = Noise(p * .2f) > 0.5 ? .1f : (float)Math.Pow((Noise(p * .2f) * 2), 3) * .1f 0;
-    //float continent = (float)Math.Pow(Noise(p * .2f), 2) * .3f;
-    float continent = Noise(p * .2f) * .2f;
-    int mask;
-    if(continent > 0.1){
-        mask = 1;
-    } else {
-        mask = 0;
-    }
-
-    //float e = Noise(p) + .5f * Noise(p * 2) + .25f * Noise(p * 4) * mask;
-
-    return continent + e * mask * .05f;
-}*/
-
 float getNoiseValue(vec3 p, float scale) {
     float amplitude = 1;
     float frequency = 1;

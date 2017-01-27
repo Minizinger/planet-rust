@@ -25,7 +25,7 @@ fn main() {
 
     let mut cam : Camera = Camera::new(Vector3::new(0.0, -5.0, 0.0), width as f32 / height as f32, 5.);
     let mut planet : Planet<VertexPosition, Normal> = Planet::new(&display, 4);
-    let mut ocean : Ocean<VertexPosition, Normal> = Ocean::new(&display, 3, 1.09);
+    let mut ocean : Ocean<VertexPosition, Normal> = Ocean::new(&display, 4, 1.09);
 
     let mut vertical_position : f32 = 0.;
     let mut horisontal_angle : f32 = 0.;
@@ -69,7 +69,7 @@ fn main() {
 
                 glium::glutin::Event::KeyboardInput(_, _, Some(glium::glutin::VirtualKeyCode::Space)) => {
                     planet = Planet::new(&display, 4);
-                    ocean = Ocean::new(&display, 3, 1.09);
+                    ocean = Ocean::new(&display, 4, 1.09);
                 },
 
                 _ => ()
