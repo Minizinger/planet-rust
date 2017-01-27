@@ -56,42 +56,31 @@ fn main() {
 
         target.finish().unwrap();
 
-
         let mut cam_pos = cam.get_position();
-        for ev in display.poll_events() {
-            match ev {
-                glium::glutin::Event::KeyboardInput(_, _, Some(glium::glutin::VirtualKeyCode::Escape)) |
-                glium::glutin::Event::Closed => return,
 
-                glium::glutin::Event::KeyboardInput(_,
-                                                    _,
-                                                    Some(glium::glutin::VirtualKeyCode::Up)) => {
+        for ev in display.poll_events() {
+            use glium::glutin::Event::*;
+            use glium::glutin::VirtualKeyCode::*;
+
+            match ev {
+                KeyboardInput(_, _, Some(Escape)) |
+                Closed => return,
+                KeyboardInput(_, _, Some(Up)) => {
                     vertical_position += 0.1
                 }
-                glium::glutin::Event::KeyboardInput(_,
-                                                    _,
-                                                    Some(glium::glutin::VirtualKeyCode::Down)) => {
+                KeyboardInput(_, _, Some(Down)) => {
                     vertical_position -= 0.1
                 }
-
-                glium::glutin::Event::KeyboardInput(_,
-                                                    _,
-                                                    Some(glium::glutin::VirtualKeyCode::Right)) => {
+                KeyboardInput(_, _, Some(Right)) => {
                     horisontal_angle += 0.1
                 }
-                glium::glutin::Event::KeyboardInput(_,
-                                                    _,
-                                                    Some(glium::glutin::VirtualKeyCode::Left)) => {
+                KeyboardInput(_, _, Some(Left)) => {
                     horisontal_angle -= 0.1
                 }
-
-                glium::glutin::Event::KeyboardInput(_,
-                                                    _,
-                                                    Some(glium::glutin::VirtualKeyCode::Space)) => {
+                KeyboardInput(_, _, Some(Space)) => {
                     planet = Planet::new(&display, 4);
                     ocean = Ocean::new(&display, 4, 1.09);
                 }
-
                 _ => (),
             }
         }
