@@ -3,19 +3,19 @@ use cgmath::{Vector3, InnerSpace};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub enum TriangleContent<T : AnyVertex + Clone>{
-    Triangles([Rc<RefCell<Triangle<T>>>; 4]),
+pub enum TriangleContent<T : AnyVertex + Clone, N : AnyVertex + Clone>{
+    Triangles([Rc<RefCell<Triangle<T, N>>>; 4]),
     Verticies([T; 3]),
 }
 
-pub struct Triangle<T : AnyVertex + Clone>{
+pub struct Triangle<T : AnyVertex + Clone, N : AnyVertex + Clone>{
     pub subdivided: bool,
     pub level_of_subdivision: f32,
-    pub contents: TriangleContent<T>
+    pub contents: TriangleContent<T, N>
 }
 
-impl<T : AnyVertex + Clone> Triangle<T> {
-     pub fn new(pos: [Vector3<f32>; 3], los: f32) -> Triangle<T>{
+impl<T : AnyVertex + Clone, N : AnyVertex + Clone> Triangle<T, N> {
+     pub fn new(pos: [Vector3<f32>; 3], los: f32) -> Triangle<T, N>{
          let verts : [T; 3] = [T::new(pos[0].into()), T::new(pos[1].into()), T::new(pos[2].into())];
          Triangle{
              subdivided: false,
@@ -26,11 +26,11 @@ impl<T : AnyVertex + Clone> Triangle<T> {
 
      pub fn subdivide(&mut self){
          //let temp : Result<Box<&TriangleContent<T>>, _> = self.contents.downcast();
-         let tris : [Rc<RefCell<Triangle<T>>>; 4] = [Rc::new(RefCell::new(Triangle::new([Vector3::new(0.,0.,0.); 3], 0.))), 
+         let tris : [Rc<RefCell<Triangle<T, N>>>; 4] = [Rc::new(RefCell::new(Triangle::new([Vector3::new(0.,0.,0.); 3], 0.))), 
                                                     Rc::new(RefCell::new(Triangle::new([Vector3::new(0.,0.,0.); 3], 0.))), 
                                                     Rc::new(RefCell::new(Triangle::new([Vector3::new(0.,0.,0.); 3], 0.))), 
                                                     Rc::new(RefCell::new(Triangle::new([Vector3::new(0.,0.,0.); 3], 0.)))];
-         let mut triangles_temp : TriangleContent<T> = TriangleContent::Triangles(tris);
+         let mut triangles_temp : TriangleContent<T, N> = TriangleContent::Triangles(tris);
 
          match self.contents {
              TriangleContent::Triangles(ref t) => {
@@ -39,11 +39,11 @@ impl<T : AnyVertex + Clone> Triangle<T> {
                 }
              },
              TriangleContent::Verticies(ref v) => {
-                let a = Triangle::<T>::middle_point(v[0].get_position(), v[1].get_position());
-                let b = Triangle::<T>::middle_point(v[1].get_position(), v[2].get_position());
-                let c = Triangle::<T>::middle_point(v[2].get_position(), v[0].get_position());
+                let a = Triangle::<T, N>::middle_point(v[0].get_position(), v[1].get_position());
+                let b = Triangle::<T, N>::middle_point(v[1].get_position(), v[2].get_position());
+                let c = Triangle::<T, N>::middle_point(v[2].get_position(), v[0].get_position());
 
-                let triangles : [Rc<RefCell<Triangle<T>>>; 4] = [Rc::new(RefCell::new(Triangle::new([v[0].get_position(), a, c], self.level_of_subdivision + 1.))),
+                let triangles : [Rc<RefCell<Triangle<T, N>>>; 4] = [Rc::new(RefCell::new(Triangle::new([v[0].get_position(), a, c], self.level_of_subdivision + 1.))),
                     Rc::new(RefCell::new(Triangle::new([v[1].get_position(), b, a], self.level_of_subdivision + 1.))),
                     Rc::new(RefCell::new(Triangle::new([v[2].get_position(), c, b], self.level_of_subdivision + 1.))),
                     Rc::new(RefCell::new(Triangle::new([a, b, c], self.level_of_subdivision + 1.)))];
@@ -78,8 +78,8 @@ impl<T : AnyVertex + Clone> Triangle<T> {
          out
      }
 
-     pub fn get_normal(&self) -> Vec<Normal>{
-         let mut out : Vec<Normal> = Vec::new();
+     pub fn get_normal(&self) -> Vec<N>{
+         let mut out : Vec<N> = Vec::new();
          match self.contents{
              TriangleContent::Triangles(ref t) =>
              {
@@ -92,7 +92,7 @@ impl<T : AnyVertex + Clone> Triangle<T> {
                  let v1 = v[2].get_position() - v[0].get_position();
                  let v2 = v[1].get_position() - v[0].get_position();
                  let n = v1.cross(v2);
-                 let norm = Normal{normal: [n.x, n.y, n.z]};
+                 let norm = N::new([n.x, n.y, n.z]);
                  out = vec![norm, norm, norm];
              }
          }

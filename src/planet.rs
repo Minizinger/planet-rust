@@ -1,16 +1,20 @@
-use vertex::*;
+use vertex::{VertexPosition, AnyVertex};
+use super::glium::backend::Facade;
+use super::glium::{Frame, DrawParameters};
 use cgmath::*;
 use triangle::*;
 use std::f32;
+use renderable::{RenderableVertexNormal, Renderable};
 
-pub struct Planet<T : AnyVertex + Clone> {
-    triangles : Vec<Triangle<T>>,
+pub struct Planet<T : AnyVertex + Clone, N : AnyVertex + Clone> {
+    triangles : Vec<Triangle<T, N>>,
     pub verticies : Vec<T>,
-    pub normals : Vec<Normal>,
+    pub normals : Vec<N>,
+    pub renderable : RenderableVertexNormal<T, N>,
 }
 
-impl<T : AnyVertex + Clone> Planet<T> {
-     pub fn new(subdivisions : i32) -> Self{
+impl<T : AnyVertex + Clone, N : AnyVertex + Clone> Planet<T, N> {
+     pub fn new(display : &Facade, subdivisions : i32) -> Self{
          let t : f32 = (1. + (5.0f32).sqrt()) / 2.;
 
          let mut p0 : Vector3<f32> = Vector3::new(-1., t, 0.);
@@ -41,7 +45,7 @@ impl<T : AnyVertex + Clone> Planet<T> {
          p10 = p10.normalize();
          p11 = p11.normalize();
 
-         let mut tris : Vec<Triangle<T>> = Vec::new();
+         let mut tris : Vec<Triangle<T, N>> = Vec::new();
 
          tris.push(Triangle::new([p0, p11, p5], 0.));
          tris.push(Triangle::new([p0, p5, p1], 0.));
@@ -67,7 +71,7 @@ impl<T : AnyVertex + Clone> Planet<T> {
          tris.push(Triangle::new([p8, p6, p7], 0.));
          tris.push(Triangle::new([p9, p8, p1], 0.));
 
-         for i in 0..subdivisions{
+         for _ in 0..subdivisions{
              for tri in tris.iter_mut(){
                  (*tri).subdivide();
              }
@@ -78,17 +82,23 @@ impl<T : AnyVertex + Clone> Planet<T> {
              verts.append(&mut tri.get_verticies());
          }
 
-         let mut nrm : Vec<Normal> = Vec::new();
+         let mut nrm : Vec<N> = Vec::new();
          for t in tris.iter_mut(){
              nrm.append(&mut t.get_normal());
          }
-
-        println!("{}", verts.len());
+        let vertex_shader = format!("{}{}", include_str!("../assets/shaders/noise4d.glsl"), include_str!("../assets/shaders/shader_150.glslv"));
+        let fragment_shader = include_str!("../assets/shaders/shader_150.glslf");
+        let rnd = RenderableVertexNormal::new(display, &verts, &nrm, &vertex_shader, &fragment_shader);
 
          Planet{
              triangles : tris,
              verticies : verts,
              normals : nrm,
+             renderable : rnd,
          }
+     }
+
+     pub fn draw(&mut self, target: &mut Frame, params: DrawParameters, m_view: [[f32; 4]; 4], m_proj: [[f32; 4]; 4], light: [f32; 3]){
+         self.renderable.render(target, params, m_view, m_proj, light);
      }
 }
