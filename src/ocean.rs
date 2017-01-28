@@ -50,7 +50,7 @@ impl<T : AnyVertex, N : AnyVertex> Ocean<T, N> {
          p10 = p10.normalize();
          p11 = p11.normalize();
 
-         let mut tris : Vec<Triangle<T, N>> = Vec::new();
+         let mut tris : Vec<Triangle<T, N>> = Vec::with_capacity(20);
 
          tris.push(Triangle::new([p0, p11, p5], 0.));
          tris.push(Triangle::new([p0, p5, p1], 0.));
@@ -82,12 +82,12 @@ impl<T : AnyVertex, N : AnyVertex> Ocean<T, N> {
              }
          }
 
-         let mut verts : Vec<T> = Vec::new();
+         let mut verts : Vec<T> = Vec::with_capacity(tris.len());
          for tri in tris.iter_mut(){
              verts.append(&mut tri.get_verticies());
          }
 
-         let mut nrm : Vec<N> = Vec::new();
+         let mut nrm : Vec<N> = Vec::with_capacity(tris.len());
          for t in tris.iter_mut(){
              nrm.append(&mut t.get_normal());
          }
