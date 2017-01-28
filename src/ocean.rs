@@ -73,15 +73,16 @@ impl<T, N: AnyVertex> Ocean<T, N>
             }
         }
 
-        let mut verts: Vec<T> = Vec::new();
+        let mut verts: Vec<T> = Vec::with_capacity(tris.len());
         for tri in tris.iter_mut() {
             verts.append(&mut tri.get_verticies());
         }
 
-        let mut nrm: Vec<N> = Vec::new();
+        let mut nrm: Vec<N> = Vec::with_capacity(tris.len());
         for t in tris.iter_mut() {
             nrm.append(&mut t.get_normal());
         }
+      
         let vertex_shader = include_str!("../assets/shaders/ocean.glslv");
         let fragment_shader = include_str!("../assets/shaders/ocean.glslf");
         let rnd =
@@ -94,7 +95,7 @@ impl<T, N: AnyVertex> Ocean<T, N>
 
         let mut rng = rand::thread_rng();
         let col = Range::new(0.0f32, 1.0f32);
-
+      
         Ocean {
             triangles: tris,
             verticies: verts,
