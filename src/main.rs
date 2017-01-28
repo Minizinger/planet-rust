@@ -3,6 +3,8 @@ extern crate glium;
 extern crate cgmath;
 extern crate rand;
 
+#[macro_use]
+mod macros;
 mod vertex;
 mod camera;
 mod planet;

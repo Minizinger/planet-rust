@@ -43,9 +43,11 @@ impl Camera {
         self.position = new_pos.normalize_to(self.camera_orbit);
         self.update_matricies();
     }
+    #[allow(dead_code)] //maybe will be useful later
     pub fn get_orbit(&self) -> f32 {
         self.camera_orbit
     }
+    #[allow(dead_code)] //maybe will be useful later
     pub fn set_orbit(&mut self, new_orbit: f32) {
         self.position = self.position.normalize_to(new_orbit);
         self.update_matricies();

@@ -16,6 +16,7 @@ pub struct RenderableVertexNormal<V: Copy + Vertex, N: Copy + Vertex> {
     index_buffer: NoIndices,
     shader: Program,
 }
+#[allow(dead_code)] //maybe will be useful later
 pub struct RenderableVertex<V: Copy + Vertex> {
     vertex_buffer: VertexBuffer<V>,
     index_buffer: NoIndices,
@@ -45,6 +46,7 @@ impl<V: Copy + Vertex, N: Copy + Vertex> RenderableVertexNormal<V, N> {
         }
     }
 }
+#[allow(dead_code)] //maybe will be useful later
 impl<V: Copy + Vertex> RenderableVertex<V> {
     pub fn new(display: &Facade,
                verts: &Vec<V>,

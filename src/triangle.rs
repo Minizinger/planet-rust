@@ -3,18 +3,18 @@ use cgmath::{Vector3, InnerSpace};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub enum TriangleContent<T: AnyVertex + Clone, N: AnyVertex + Clone> {
+pub enum TriangleContent<T: AnyVertex, N: AnyVertex> {
     Triangles([Rc<RefCell<Triangle<T, N>>>; 4]),
     Verticies([T; 3]),
 }
 
-pub struct Triangle<T: AnyVertex + Clone, N: AnyVertex + Clone> {
+pub struct Triangle<T: AnyVertex, N: AnyVertex> {
     pub subdivided: bool,
     pub level_of_subdivision: f32,
     pub contents: TriangleContent<T, N>,
 }
 
-impl<T: AnyVertex + Clone, N: AnyVertex + Clone> Triangle<T, N> {
+impl<T: AnyVertex, N: AnyVertex> Triangle<T, N> {
     pub fn new(pos: [Vector3<f32>; 3], los: f32) -> Triangle<T, N> {
         let verts: [T; 3] = [T::new(pos[0].into()), T::new(pos[1].into()), T::new(pos[2].into())];
         Triangle {

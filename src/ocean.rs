@@ -1,4 +1,4 @@
-use vertex::{VertexPosition, AnyVertex};
+use vertex::AnyVertex;
 use super::glium::backend::Facade;
 use super::glium::{Frame, DrawParameters};
 use cgmath::*;
@@ -15,10 +15,6 @@ pub struct Ocean<T: AnyVertex, N: AnyVertex> {
     pub renderable: RenderableVertexNormal<T, N>,
     scale: [[f32; 4]; 4],
     u_color: [f32; 3],
-}
-
-macro_rules! vec3 {
-    [$x:expr, $y:expr, $z:expr] => ( Vector3::new($x, $y, $z) )
 }
 
 impl<T, N: AnyVertex> Ocean<T, N>
